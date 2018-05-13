@@ -121,9 +121,9 @@ function showRankDist(ndx) {
         .width(400)
         .height(300)
         .dimension(dim)
-        .group(profByGender, 'Professor')
-        .stack(asstProfByGender, 'Assistant Professor')
-        .stack(assocProfByGender, 'Associate Professor')
+        .group(profByGender, 'Prof.')
+        .stack(asstProfByGender, 'Asst. Prof.')
+        .stack(assocProfByGender, 'Assoc. Prof.')
         .valueAccessor(function(d) {
             if(d.value.total > 0) {
                 return (d.value.match / d.value.total) * 100;
