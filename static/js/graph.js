@@ -11,7 +11,8 @@ function makeGraphs(error, salaryData) {
     
     showDisciplineSelector(ndx);
     
-    showPercentProfByGender(ndx);
+    showPercentProfByGender(ndx, 'Female', '#percent-of-women-professors');
+    showPercentProfByGender(ndx, 'Male', '#percent-of-men-professors');
     
     showGenderBalance(ndx);
     showAverageSalaries(ndx);
@@ -30,10 +31,10 @@ function showDisciplineSelector(ndx) {
         .group(group)
 }
 
-function showPercentProfByGender(ndx) {
-    var percentageFemale = ndx.groupAll().reduce(
+function showPercentProfByGender(ndx, gender, element) {
+    var percentage = ndx.groupAll().reduce(
         function(p, v) {
-            if(v.sex == 'female') {
+            if(v.sex == gender) {
                 p.count++;
                 if(v.rank == 'Prof') {
                     p.areProf++;
@@ -42,7 +43,7 @@ function showPercentProfByGender(ndx) {
             return p;
         },
         function(p, v) {
-            if(v.sex == 'female') {
+            if(v.sex == gender) {
                 p.count--;
                 if(v.rank == 'Prof') {
                     p.areProf--;
@@ -54,6 +55,18 @@ function showPercentProfByGender(ndx) {
             return {count: 0, areProf: 0};
         }
     );
+    
+    dc.numberDisplay(element)
+        .formatNumber(d3.format('.2%'))
+        .valueAccessor(function(d) {
+            if(d.count == 0) {
+                return 0;
+            } else {
+                return (d.areProf / d.count);
+            }
+        })
+        .group(percentage);
+        
 }
 
 function showGenderBalance(ndx) {
