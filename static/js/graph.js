@@ -7,6 +7,7 @@ function makeGraphs(error, salaryData) {
     
     salaryData.forEach(function(d) {
         d.salary = parseInt(d.salary);
+        d.yrs_service = parseInt(d['yrs.service']);
     });
     
     showDisciplineSelector(ndx);
@@ -17,6 +18,8 @@ function makeGraphs(error, salaryData) {
     showGenderBalance(ndx);
     showAverageSalaries(ndx);
     showRankDist(ndx);
+    
+    showServiceToSalaryCorr(ndx);
     
     
     dc.renderAll();
@@ -178,4 +181,32 @@ function showRankDist(ndx) {
         .xUnits(dc.units.ordinal)
         .legend(dc.legend().x(320).y(20).itemHeight(15).gap(5))
         .margins({top: 10, right: 100, bottom: 30, left: 50});
+}
+
+function showServiceToSalaryCorr(ndx) {
+    var eDim = ndx.dimension(dc.pluck('yrs_service'));
+    var experienceDim = ndx.dimension(function(d) {
+        return [d.yrs_service, d.salary];
+    });
+    
+    var experienceSalaryGroup = experienceDim.group();
+    
+    var minExperience = eDim.bottom(1)[0].yrs_service;
+    var maxExperience = eDim.top(1)[0].yrs_service;
+    
+    dc.scatterPlot('#service-salary')
+        .width(800)
+        .height(400)
+        .x(d3.scaleLinear().domain([minExperience, maxExperience]))
+        .brushOn(false)
+        .symbolSize(8)
+        .clipPadding(10)
+        .yAxisLabel('Salary')
+        .xAxisLabel('Years of Service')
+        .title(function(d) {
+            return 'Earned $' + d.key[1];
+        })
+        .dimension(experienceDim)
+        .group(experienceSalaryGroup)
+        .margins({top: 10, right: 50, bottom: 75, left: 75});
 }
