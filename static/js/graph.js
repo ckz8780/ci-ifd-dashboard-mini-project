@@ -7,6 +7,7 @@ function makeGraphs(error, salaryData) {
     
     showDisciplineSelector(ndx);
     showGenderBalance(ndx);
+    showAverageSalaries(ndx);
     
     dc.renderAll();
 }
@@ -35,4 +36,33 @@ function showGenderBalance(ndx) {
         .xUnits(dc.units.ordinal)
         .xAxisLabel("Gender")
         .yAxis().ticks(20);
+}
+
+function showAverageSalaries(ndx) {
+    var dim = ndx.dimension(dc.pluck('sex'));
+    
+    function add(p, v) {
+        p.count++;
+        p.total += v.salary;
+        p.average = p.total / p.count;
+        return p;
+    }
+    
+    function remove(p, v) {
+        p.count--;
+        if(p.count == 0) {
+            p.total = 0;
+            p.average = 0;
+        } else {
+            p.total -= v.salary;
+            p.average = p.total / p.count;
+        }
+        return p;
+    }
+    
+    function init() {
+        return {count: 0, total: 0, average: 0};
+    }
+    
+    var averageSalaryByGender = dim.group().reduce(add, remove, init);
 }
