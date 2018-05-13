@@ -10,9 +10,13 @@ function makeGraphs(error, salaryData) {
     });
     
     showDisciplineSelector(ndx);
+    
+    showPercentProfByGender(ndx);
+    
     showGenderBalance(ndx);
     showAverageSalaries(ndx);
     showRankDist(ndx);
+    
     
     dc.renderAll();
 }
@@ -24,6 +28,32 @@ function showDisciplineSelector(ndx) {
     dc.selectMenu('#discipline-selector')
         .dimension(dim)
         .group(group)
+}
+
+function showPercentProfByGender(ndx) {
+    var percentageFemale = ndx.groupAll().reduce(
+        function(p, v) {
+            if(v.sex == 'female') {
+                p.count++;
+                if(v.rank == 'Prof') {
+                    p.areProf++;
+                }
+            }
+            return p;
+        },
+        function(p, v) {
+            if(v.sex == 'female') {
+                p.count--;
+                if(v.rank == 'Prof') {
+                    p.areProf--;
+                }
+            }
+            return p;
+        },
+        function () {
+            return {count: 0, areProf: 0};
+        }
+    );
 }
 
 function showGenderBalance(ndx) {
