@@ -5,9 +5,19 @@ queue()
 function makeGraphs(error, salaryData) {
     var ndx = crossfilter(salaryData);
     
+    showDisciplineSelector(ndx);
     showGenderBalance(ndx);
     
     dc.renderAll();
+}
+
+function showDisciplineSelector(ndx) {
+    dim = ndx.dimension(dc.pluck('discipline'));
+    group = dim.group();
+    
+    dc.selectMenu('#discipline-selector')
+        .dimension(dim)
+        .group(group)
 }
 
 function showGenderBalance(ndx) {
@@ -23,7 +33,6 @@ function showGenderBalance(ndx) {
         .transitionDuration(500)
         .x(d3.scaleOrdinal())
         .xUnits(dc.units.ordinal)
-        .elasticY(true)
         .xAxisLabel("Gender")
         .yAxis().ticks(20);
 }
