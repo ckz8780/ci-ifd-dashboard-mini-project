@@ -8,6 +8,8 @@ function makeGraphs(error, salaryData) {
     salaryData.forEach(function(d) {
         d.salary = parseInt(d.salary);
         d.yrs_service = parseInt(d['yrs.service']);
+        d.yrs_since_phd = parseInt(d['yrs.since.phd']);
+        
     });
     
     showDisciplineSelector(ndx);
@@ -20,6 +22,7 @@ function makeGraphs(error, salaryData) {
     showRankDist(ndx);
     
     showServiceToSalaryCorr(ndx);
+    showPhdToSalaryCorr(ndx);
     
     
     dc.renderAll();
@@ -179,6 +182,7 @@ function showRankDist(ndx) {
         })
         .x(d3.scaleOrdinal())
         .xUnits(dc.units.ordinal)
+        .xAxisLabel('Gender')
         .legend(dc.legend().x(320).y(20).itemHeight(15).gap(5))
         .margins({top: 10, right: 100, bottom: 30, left: 50});
 }
@@ -217,5 +221,42 @@ function showServiceToSalaryCorr(ndx) {
         .colors(genderColors)
         .dimension(experienceDim)
         .group(experienceSalaryGroup)
+        .margins({top: 10, right: 50, bottom: 75, left: 75});
+}
+
+function showPhdToSalaryCorr(ndx) {
+    
+    var genderColors = d3.scaleOrdinal()
+        .domain(['Female', 'Male'])
+        .range(['pink', 'blue']);
+    
+    var pDim = ndx.dimension(dc.pluck('yrs_since_phd'));
+    var phdDim = ndx.dimension(function(d) {
+        return [d.yrs_since_phd, d.salary, d.rank, d.sex];
+    });
+    
+    var phdSalaryGroup = phdDim.group();
+    
+    var minPhd = pDim.bottom(1)[0].yrs_since_phd;
+    var maxPhd = pDim.top(1)[0].yrs_since_phd;
+    
+    dc.scatterPlot('#phd-salary')
+        .width(800)
+        .height(400)
+        .x(d3.scaleLinear().domain([minPhd, maxPhd]))
+        .brushOn(false)
+        .symbolSize(8)
+        .clipPadding(10)
+        .yAxisLabel('Salary')
+        .xAxisLabel('Years Since PhD')
+        .title(function(d) {
+            return d.key[3] + ' ' + d.key[2] + ' earned $' + d.key[1];
+        })
+        .colorAccessor(function(d) {
+            return d.key[3];
+        })
+        .colors(genderColors)
+        .dimension(phdDim)
+        .group(phdSalaryGroup)
         .margins({top: 10, right: 50, bottom: 75, left: 75});
 }
