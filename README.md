@@ -11,4 +11,4 @@ This is a small dashboard app that utilizes d3.js and crossfilter.js. This is pa
 - **queue.js** 1.0.7
 - **jQuery** 3.3.1
 
-The index is located at https://ckz8780.github.io/ifd-dashboard-mini-project/index.html
+The index is located at https://ckz8780.github.io/ci-ifd-dashboard-mini-project/index.html
